@@ -176,15 +176,15 @@ def run_simulation():
         positions = INIT_XYZS + swarm_target_pos
 
         #### Update obstacle positions to follow the swarm ##########
-        # avg_position = np.mean(positions, axis=0)
+        avg_position = np.mean(positions, axis=0)
         current_pos1, _ = p.getBasePositionAndOrientation(obstacle1)
         current_pos2, _ = p.getBasePositionAndOrientation(obstacle2)
 
         new_pos1 = (
-            current_pos1 + (positions[0] - current_pos1) * 0.01
+            current_pos1 + (avg_position - current_pos1) * 0.01
         )  # Adjust the speed factor as needed
         new_pos2 = (
-            current_pos2 + (positions[0] - current_pos2) * 0.01
+            current_pos2 + (avg_position - current_pos2) * 0.01
         )  # Adjust the speed factor as needed
 
         p.resetBasePositionAndOrientation(obstacle1, new_pos1, [0, 0, 0, 1])
@@ -192,22 +192,19 @@ def run_simulation():
 
         #### Shooting bullets at drones when close enough ##########
         if time.time() - START > 3:  # Start shooting bullets after 3 seconds
-            if time.time() - last_bullet_time > 1:  # Slower rate of fire
-                if np.linalg.norm(new_pos1 - avg_position) < 1:
-                    target_drone_index = random.randint(0, DEFAULT_NUM_DRONES - 1)
-                    bullet_id, direction = create_bullet(
-                        new_pos1, positions[target_drone_index]
-                    )
-                    bullets.append((bullet_id, direction))
+            if np.linalg.norm(new_pos1 - avg_position) < 1:
+                target_drone_index = random.randint(0, DEFAULT_NUM_DRONES - 1)
+                bullet_id, direction = create_bullet(
+                    new_pos1, positions[target_drone_index]
+                )
+                bullets.append((bullet_id, direction))
 
-                if np.linalg.norm(new_pos2 - avg_position) < 1:
-                    target_drone_index = random.randint(0, DEFAULT_NUM_DRONES - 1)
-                    bullet_id, direction = create_bullet(
-                        new_pos2, positions[target_drone_index]
-                    )
-                    bullets.append((bullet_id, direction))
-
-                last_bullet_time = time.time()
+            if np.linalg.norm(new_pos2 - avg_position) < 1:
+                target_drone_index = random.randint(0, DEFAULT_NUM_DRONES - 1)
+                bullet_id, direction = create_bullet(
+                    new_pos2, positions[target_drone_index]
+                )
+                bullets.append((bullet_id, direction))
 
         #### Update bullets ########################################
         for bullet_id, direction in bullets:
