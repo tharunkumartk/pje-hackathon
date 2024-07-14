@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Drone Control</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <h1>Control the Drones</h1>
+    <div id="controls">
+      <label for="drone_index">Drone Index:</label>
+      <input type="number" id="drone_index" min="0" max="9" value="0" />
+      <button onclick="sendControl('up')">Up (W)</button>
+      <button onclick="sendControl('down')">Down (S)</button>
+      <button onclick="sendControl('left')">Left (A)</button>
+      <button onclick="sendControl('right')">Right (D)</button>
+      <button onclick="sendControl('higher')">Higher (U)</button>
+      <button onclick="sendControl('lower')">Lower (I)</button>
+    </div>
+
+    <script>
+      function sendControl(direction) {
+        const droneIndex = parseInt(
+          document.getElementById("drone_index").value
+        );
+        $.ajax({
+          url: "/control",
+          type: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({
+            drone_index: droneIndex,
+            direction: direction,
+          }),
+          success: function (response) {
+            console.log(
+              "Control sent: " + direction + " for drone " + droneIndex
+            );
+          },
+        });
+      }
+
+      $(document).keydown(function (e) {
+        const droneIndex = parseInt(
+          document.getElementById("drone_index").value
+        );
+        switch (e.which) {
+          case 87: // W
+            sendControl("up");
+            break;
+          case 83: // S
+            sendControl("down");
+            break;
+          case 65: // A
+            sendControl("left");
+            break;
+          case 68: // D
+            sendControl("right");
+            break;
+          case 85: // U
+            sendControl("higher");
+            break;
+          case 73: // I
+            sendControl("lower");
+            break;
+          default:
+            return;
+        }
+        e.preventDefault();
+      });
+    </script>
+  </body>
+</html>
