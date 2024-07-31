@@ -108,5 +108,3 @@ Run all tests from the top folder with
 pytest tests/
 ```
 
------
-> University of Toronto's [Dynamic Systems Lab](https://github.com/utiasDSL) / [Vector Institute](https://github.com/VectorInstitute) / University of Cambridge's [Prorok Lab](https://github.com/proroklab)
